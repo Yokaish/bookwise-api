@@ -27,6 +27,7 @@ public class Book {
 
     private Integer pageNumber;
     private String synopsis;
+    private Boolean active = true;
 
     public Book(BookCreateDTO data) {
         this.title = data.title();
@@ -52,6 +53,10 @@ public class Book {
         if (data.synopsis() != null) {
             this.synopsis = data.synopsis();
         }
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 
 }

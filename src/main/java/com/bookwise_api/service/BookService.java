@@ -17,6 +17,15 @@ public class BookService {
     @Autowired
     private BookRepository repository;
 
+    private EntityNotFoundException throwBookNotFound(Long id) {
+        return new EntityNotFoundException("Any book found with id: " + id);
+    }
+
+    private Book findBook(Long id) {
+       return repository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> throwBookNotFound(id));
+    }
+
     @Transactional
     public ResponseEntity createBook(BookCreateDTO bookData, UriComponentsBuilder uriBuilder) {
         var book = new Book(bookData);
@@ -27,7 +36,7 @@ public class BookService {
     }
 
     public ResponseEntity<BookPageDTO> listBooks(Pageable pagination) {
-        var page = repository.findAll(pagination)
+        var page = repository.findAllByActiveTrue(pagination)
                 .map(BookResponseDTO::new); //paginaçao ja devolve um page do dto, sem precisar do stream
 
         var response = new BookPageDTO(
@@ -45,8 +54,7 @@ public class BookService {
 
     public ResponseEntity<BookResponseDTO> findBookById(Long id) throws EntityNotFoundException {
 
-        Book book = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Any book found with id: " + id));
+        Book book = findBook(id);
 
         BookResponseDTO response = new BookResponseDTO(book);
 
@@ -56,8 +64,7 @@ public class BookService {
 
     @Transactional
     public ResponseEntity updateBookData(Long id, BookUpdateDataDTO bookData) {
-        Book book = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Any book found with id: " + id));
+        Book book = findBook(id);
 
         if (bookData.title() == null
                 && bookData.author() == null
@@ -71,5 +78,14 @@ public class BookService {
         repository.save(book);
 
         return ResponseEntity.ok(new BookUpdateDataDTO(book));
+    }
+
+    @Transactional
+    public ResponseEntity deactivateBook(Long id) {
+        Book book = findBook(id);
+        book.deactivate();
+        repository.save(book);
+        System.out.println(book);
+        return ResponseEntity.noContent().build();
     }
 }

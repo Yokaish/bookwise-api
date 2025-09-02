@@ -44,5 +44,10 @@ public class BookController {
         return service.updateBookData(id, bookData);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity deactivateBook(@PathVariable Long id) {
+        return service.deactivateBook(id);
+    }
+
 
 }
