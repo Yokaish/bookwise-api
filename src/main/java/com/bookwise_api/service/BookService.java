@@ -1,9 +1,7 @@
 package com.bookwise_api.service;
 
-import com.bookwise_api.domain.Book.Book;
-import com.bookwise_api.domain.Book.BookCreateDTO;
-import com.bookwise_api.domain.Book.BookPageDTO;
-import com.bookwise_api.domain.Book.BookResponseDTO;
+import com.bookwise_api.domain.Book.*;
+import com.bookwise_api.infrastructure.exceptions.NoFieldsToUpdateException;
 import com.bookwise_api.repository.BookRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Optional;
 
 @Service
 public class BookService {
@@ -56,5 +52,24 @@ public class BookService {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @Transactional
+    public ResponseEntity updateBookData(Long id, BookUpdateDataDTO bookData) {
+        Book book = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Any book found with id: " + id));
+
+        if (bookData.title() == null
+                && bookData.author() == null
+                && bookData.genre() == null
+                && bookData.pageNumber() == null
+                && bookData.synopsis() == null) {
+            throw new NoFieldsToUpdateException("No fields provided for update");
+        }
+
+        book.updateData(bookData);
+        repository.save(book);
+
+        return ResponseEntity.ok(new BookUpdateDataDTO(book));
     }
 }

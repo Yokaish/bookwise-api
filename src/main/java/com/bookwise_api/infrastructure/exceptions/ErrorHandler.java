@@ -3,12 +3,15 @@ package com.bookwise_api.infrastructure.exceptions;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -41,5 +44,19 @@ public class ErrorHandler {
 
         return ResponseEntity.status(404).body(error);
     }
+
+    @ExceptionHandler(NoFieldsToUpdateException.class)
+    public ResponseEntity<ErrorResponse> handleNoFields(NoFieldsToUpdateException ex, HttpServletRequest request) {
+        var error = new ErrorResponse(
+                LocalDateTime.now(),
+                400,
+                "Bad Request",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.badRequest().body(error);
+    }
+
+
 
 }

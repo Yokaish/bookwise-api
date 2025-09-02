@@ -36,4 +36,22 @@ public class Book {
         this.synopsis = data.synopsis();
     }
 
+    public void updateData(BookUpdateDataDTO data) {
+        if (data.title() != null) {
+            this.title = data.title();
+        }
+        if (data.author() != null) {
+            this.author = data.author();
+        }
+        if (data.genre() != null) {
+            this.genre = data.genre();
+        }
+        if (data.pageNumber() != null) {
+            this.pageNumber = data.pageNumber();
+        }
+        if (data.synopsis() != null) {
+            this.synopsis = data.synopsis();
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.bookwise_api.controller;
 import com.bookwise_api.domain.Book.BookCreateDTO;
 import com.bookwise_api.domain.Book.BookPageDTO;
 import com.bookwise_api.domain.Book.BookResponseDTO;
+import com.bookwise_api.domain.Book.BookUpdateDataDTO;
 import com.bookwise_api.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,14 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> findBookById(@RequestBody @PathVariable Long id) {
+    public ResponseEntity<BookResponseDTO> findBookById(@PathVariable Long id) {
         return service.findBookById(id);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateBookData(@PathVariable Long id, @RequestBody BookUpdateDataDTO bookData) {
+        return service.updateBookData(id, bookData);
+    }
+
 
 }

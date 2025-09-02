@@ -7,10 +7,10 @@ import jakarta.validation.constraints.Size;
 
 public record BookCreateDTO(
 
-        @NotBlank
+        @NotBlank @Size(max = 255)
         String title,
 
-        @NotBlank
+        @NotBlank @Size(max = 255)
         String author,
 
         @NotNull
